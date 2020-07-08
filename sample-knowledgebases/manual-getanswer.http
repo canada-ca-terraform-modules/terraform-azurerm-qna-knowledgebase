@@ -1,0 +1,6 @@
+POST https://westus.api.cognitive.microsoft.com/qnamaker/knowledgebases/73088429-6316-4caf-ade3-68af2cf739a1/generateAnswer
+Host: westus.api.cognitive.microsoft.com
+Authorization: EndpointKey 885a75e2-bf16-4f7b-bbfd-5456b7d1be1b
+Content-Type: application/json
+
+{"question":"Hello"}

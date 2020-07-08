@@ -1,0 +1,38 @@
+{
+  "name": "QnA Maker FAQ FR KB",
+  "qnaList": [
+    {
+      "id": 0,
+      "answer": "Vous pouvez modifier le message par défaut si vous utilisez le QnAMakerDialog. Voir ceci pour plus de détails: https://docs.botframework.com/fr-ca/azure-bot-service/templates/qnamaker/#navtitle",
+      "source": "Éditorial personnalisé",
+      "questions": [
+        "Comment puis-je changer le message par défaut de QnA Maker?"
+      ],
+      "metadata": []
+    },
+    {
+      "id": 0,
+      "answer": "Vous pouvez utiliser nos API REST pour gérer votre KB. Voir ici pour plus de détails: https://westus.dev.cognitive.microsoft.com/docs/services/5a93fcf85b4ccd136866eb37/operations/5ac266295b4ccd1554da7600",
+      "source": "Éditorial personnalisé",
+      "questions": [
+        "Comment mettre à jour par programmation ma base de connaissances?"
+      ],
+      "metadata": [
+        {
+          "name": "category",
+          "value": "api"
+        }
+      ]
+    }
+  ],
+  "urls": [
+    "https://docs.microsoft.com/fr-ca/azure/cognitive-services/QnAMaker/troubleshooting",
+    "https://docs.microsoft.com/fr-ca/azure/bot-service/bot-service-resources-bot-framework-faq?view=azure-bot-service-4.0"
+  ],
+  "files": [
+    {
+      "fileName": "surface_2_user_guide_french.pdf",
+      "fileUri": "http://download.microsoft.com/download/b/d/4/bd44c612-d08e-4586-9345-aca8ab978bc8/surface_2_user_guide_french.pdf"
+    }
+  ]
+}
