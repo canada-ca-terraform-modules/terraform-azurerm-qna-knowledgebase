@@ -1,0 +1,1 @@
+Workaround to get the values for the knowledgebase api.  Writes files to here and then reads them back out.
