@@ -186,7 +186,7 @@ resource "null_resource" "Chatbot-kb-result" {
             Write-Host "Publishing knowledgebase"
             If("${null_resource.Chatbot-kb-result.triggers["result"]}" -ne "")
             {
-               $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/knowledgebases/${null_resource.Chatbot-kb-result.triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
+               $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/${null_resource.Chatbot-kb-result.triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
             }
             
         EOT
