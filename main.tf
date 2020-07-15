@@ -80,7 +80,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
   name                = "${var.prefix}${var.KBLanguageCode}-svc"
-  location            = "westus"  //Not available in Canada right now
+  location            = var.cognitiveServicesLocation 
   resource_group_name = var.resourceGroupName
   kind                = "QnAMaker"
   sku_name = var.account_sku

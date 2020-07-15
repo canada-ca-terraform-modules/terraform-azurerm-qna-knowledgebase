@@ -15,6 +15,8 @@ variable "resourceGroupName" {}
 
 variable "location" {}
 
+variable "cognitiveServicesLocation" {}
+
 variable "qna_tier" {
   default = "Free"
   description = "The tier for the chatbot application service plan.  Free, Shared, Standard"

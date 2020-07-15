@@ -95,3 +95,4 @@ tags = {
 | 20200708 | 20200708.1 | 1st commit                                                                                            |
 | 20200710 | 20200710.1 | Fixed endpoints                                                                                       |
 | 20200710 | 20200710.2 | Fixed typo                                                                                            |
+| 20200715 | 20200710.1 | Added variable for cognitive services location                        |
