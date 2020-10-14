@@ -73,6 +73,7 @@ output "French_Knowledgebase_ID" {
 | account_sku                             | string | no        | The sku to use for the azure congative account.  Defaults to S0 |
 | plan_id                             | string | no        | The service plan to use.  If left out it will create one |
 | plan_reserved                             | string | no        | If the service plan is reserved.  Defaults to false.  Must be true for Linux plans. |
+| plan_kind                             | string | no        | The kind of the App Service Plan to create. Possible values are Windows (also available as App), Linux, elastic (for Premium Consumption) and FunctionApp (for a Consumption Plan). Defaults to Windows. Changing this forces a new resource to be created. |
 
 ### tag object
 
