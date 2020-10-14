@@ -96,3 +96,5 @@ tags = {
 | 20200710 | 20200710.1 | Fixed endpoints                                                                                       |
 | 20200710 | 20200710.2 | Fixed typo                                                                                            |
 | 20200715 | 20200710.1 | Added variable for cognitive services location                        |
+| 20201014 | 20201014.1 | Allowing for passing in a application service plan_id 
+                          Added plan_reserved.  Defaults to false.  Linux plans must be true.|
