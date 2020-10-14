@@ -1,4 +1,4 @@
-# Terraform azurerm-chatbot-app
+# Terraform azurerm-qna-knowledgebase
 
 ## Introduction
 
@@ -71,6 +71,8 @@ output "French_Knowledgebase_ID" {
 | qna_size                                | string | no       | The size for the chatbot qna service.  F1, D1, S1.  Note only one free one is allowed.  Defaults to F1. |
 | search_sku                              | string | no        | The sku to use for the azure search service.  Defaults to standard. |
 | account_sku                             | string | no        | The sku to use for the azure congative account.  Defaults to S0 |
+| plan_id                             | string | no        | The service plan to use.  If left out it will create one |
+| plan_reserved                             | string | no        | If the service plan is reserved.  Defaults to false.  Must be true for Linux plans. |
 
 ### tag object
 
