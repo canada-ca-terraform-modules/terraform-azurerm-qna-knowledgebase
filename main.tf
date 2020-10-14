@@ -5,7 +5,7 @@ locals {
 }
 
 resource "azurerm_app_service_plan" "Chatbot-svcplan" {
-  count = var.plan_id=="" ? : 1 : 0
+  count = "${var.plan_id == "" ? : 1 : 0}"
   name                = "${var.prefix}${var.KBLanguageCode}-svcplan"
   location            = var.location
   resource_group_name = var.resourceGroupName
