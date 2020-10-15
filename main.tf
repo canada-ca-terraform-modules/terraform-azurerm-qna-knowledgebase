@@ -99,7 +99,7 @@ resource "random_uuid" "uuid" {
   resource "null_resource" "Chatbot-kb" {
     provisioner "local-exec" {
         command = <<EOT
-          $tryCount = 10
+          $tryCount = 20
           Do{
             $failed = $false;
             
