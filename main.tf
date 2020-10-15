@@ -1,7 +1,7 @@
 
 locals {
-  filepath = "${path.module}/tmp/${var.prefix}${var.KBLanguageCode}.${random_uuid.uuid.result}"
-  filepath-key = "${path.module}/tmp/${var.prefix}${var.KBLanguageCode}-key.${random_uuid.uuid.result}"
+  filepath = "./tmp/${var.prefix}${var.KBLanguageCode}.${random_uuid.uuid.result}"
+  filepath-key = "./tmp/${var.prefix}${var.KBLanguageCode}-key.${random_uuid.uuid.result}"
 }
 
 resource "azurerm_app_service_plan" "Chatbot-svcplan" {
@@ -99,7 +99,7 @@ resource "random_uuid" "uuid" {
   resource "null_resource" "Chatbot-kb" {
     provisioner "local-exec" {
         command = <<EOT
-          $tryCount = 20
+          $tryCount = 5
           Do{
             $failed = $false;
             
