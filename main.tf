@@ -99,7 +99,7 @@ resource "random_uuid" "uuid" {
   resource "null_resource" "Chatbot-kb" {
     provisioner "local-exec" {
         command = <<EOT
-          $tryCount = 5
+          $tryCount = 10
           Do{
             $failed = $false;
             
@@ -127,7 +127,16 @@ resource "random_uuid" "uuid" {
             } While ($oppResult.resourceLocation -eq $null -And $oppResult.operationState -ne "Failed" )
             $resourceLocation =  $oppResult.resourceLocation
             Write-Host "Knowledgebase created: $resourceLocation"
-            $oppResult.resourceLocation | Out-File -Encoding "UTF8" -FilePath "./${local.filepath}" 
+            try
+            {
+              $oppResult.resourceLocation | Out-File -Encoding "UTF8" -FilePath "./${local.filepath}" 
+            }
+            catch
+            {
+               $failed = $true 
+               Write-Host $_
+               $trycount=0
+            }
                    
 
             } 
