@@ -122,7 +122,10 @@ resource "random_uuid" "uuid" {
                Write-Host $resultJson
                $oppResult = $resultJson | ConvertFrom-Json
                
-               Start-Sleep -s 300
+               if($oppResult.resourceLocation -eq $null -And $oppResult.operationState -ne "Failed")
+               {
+                 Start-Sleep -s 300
+               }
 
             } While ($oppResult.resourceLocation -eq $null -And $oppResult.operationState -ne "Failed" )
             $resourceLocation =  $oppResult.resourceLocation
