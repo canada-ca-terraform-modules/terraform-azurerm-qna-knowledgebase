@@ -104,6 +104,7 @@ resource "random_uuid" "uuid" {
             $failed = $false;
             
             Try{
+               Write-Host "Trying to create the knowledgebase"
                $data = '${file(var.KBFileName)}'
                $data = [System.Text.Encoding]::UTF8.GetBytes($data)
                $createResultJson = Invoke-WebRequest -Uri '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/knowledgebases/create'  -Body $data -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
@@ -116,6 +117,7 @@ resource "random_uuid" "uuid" {
             $endpoint = '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/operations/'
             $endpoint = $endpoint + $oppid
             Do{
+               Write-Host "Trying to get the kb id"
                $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Get
                Write-Host $resultJson
                $oppResult = $resultJson | ConvertFrom-Json
