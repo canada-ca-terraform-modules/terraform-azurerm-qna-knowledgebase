@@ -57,11 +57,11 @@ resource "azurerm_app_service" "Chatbot-svc" {
   }
 
   app_settings = {
-     "AzureSearchName" = azurerm_search_service.Chatbot-search.name
-     "AzureSearchAdminKey": azurerm_search_service.Chatbot-search.primary_key
-     "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai.instrumentation_key
-     "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai.name
-     "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai.app_id
+     "AzureSearchName" = azurerm_search_service.Chatbot-search[each.key].name
+     "AzureSearchAdminKey": azurerm_search_service.Chatbot-search[each.key].primary_key
+     "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai[each.key].instrumentation_key
+     "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai[each.key].name
+     "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai[each.key].app_id
      "PrimaryEndpointKey": "${var.prefix}${each.value.languageCode}-svc-PrimaryEndpointKey"
      "SecondaryEndpointKey": "${var.prefix}${each.value.languageCode}-svc-SecondaryEndpointKey"
      "DefaultAnswer": "No good match found in KB.",
