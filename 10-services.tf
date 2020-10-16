@@ -1,11 +1,4 @@
 
-locals {
-  deployList = {
-    for x in var.knowledgebaseList:
-    "${x.languageCode}" => x if lookup(x, "deploy", true) != false
-  }
-}
-
 //Removed plan per langauge
 resource "azurerm_app_service_plan" "Chatbot-svcplan" {
   count = var.plan_id == "" ? 1 : 0
@@ -24,8 +17,7 @@ resource "azurerm_app_service_plan" "Chatbot-svcplan" {
 }
 
 resource "azurerm_application_insights" "Chatbot-svc-ai" {
-  for_each = local.deployList
-  name                = "${var.prefix}${each.value}-svc-appi"
+  name                = "${var.prefix}-svc-appi"
   location            = var.location
   resource_group_name = var.resourceGroupName
   application_type    = "web"
@@ -40,8 +32,7 @@ resource "random_string" "random" {
 }
 
 resource "azurerm_search_service" "Chatbot-search" {
-  for_each = local.deployList
-  name                = "${lower(replace(var.prefix,"/-*_*/",""))}${lower(each.value)}svc${random_string.random.result}-ss"
+  name                = "${lower(replace(var.prefix,"/-*_*/",""))}svc${random_string.random.result}-ss"
   location            = var.location
   resource_group_name = var.resourceGroupName
   sku                 = var.search_sku
@@ -50,7 +41,6 @@ resource "azurerm_search_service" "Chatbot-search" {
 
 //Does not like underscores in the name
 resource "azurerm_app_service" "Chatbot-svc" {
-  for_each = local.deployList
   name                = "${var.prefix}${each.value}-svc"
   location            = var.location
   resource_group_name = var.resourceGroupName
@@ -65,11 +55,11 @@ resource "azurerm_app_service" "Chatbot-svc" {
   }
 
   app_settings = {
-     "AzureSearchName" = azurerm_search_service.Chatbot-search[each.key].name
-     "AzureSearchAdminKey": azurerm_search_service.Chatbot-search[each.key].primary_key
-     "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai[each.key].instrumentation_key
-     "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai[each.key].name
-     "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai[each.key].app_id
+     "AzureSearchName" = azurerm_search_service.Chatbot-search.name
+     "AzureSearchAdminKey": azurerm_search_service.Chatbot-search.primary_key
+     "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai.instrumentation_key
+     "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai.name
+     "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai.app_id
      "PrimaryEndpointKey": "${var.prefix}${each.value}-svc-PrimaryEndpointKey"
      "SecondaryEndpointKey": "${var.prefix}${each.value}-svc-SecondaryEndpointKey"
      "DefaultAnswer": "No good match found in KB.",
@@ -87,13 +77,12 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
-  for_each = local.deployList
   name                = "${var.prefix}${each.value}-svc"
   location            = var.cognitiveServicesLocation 
   resource_group_name = var.resourceGroupName
   kind                = "QnAMaker"
   sku_name = var.account_sku
-  qna_runtime_endpoint = "https://${azurerm_app_service.Chatbot-svc[each.key].default_site_hostname}"
+  qna_runtime_endpoint = "https://${azurerm_app_service.Chatbot-svc.default_site_hostname}"
   depends_on = [
       azurerm_app_service.Chatbot-svc
   ]
