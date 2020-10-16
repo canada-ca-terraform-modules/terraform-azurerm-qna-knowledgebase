@@ -136,14 +136,14 @@ resource "null_resource" "Chatbot-kb-result" {
                    
           
         EOT
-        interpreter = ["PowerShell", "-Command"] 
+        interpreter = ["pwsh", "-Command"] 
       
     }
     depends_on = [null_resource.Chatbot-kb-publish]
     provisioner "local-exec" {
       when    = destroy
       command = "Remove-Item ./${path.module}/tmp/*-key.* -Force"
-      interpreter = ["PowerShell", "-Command"] 
+      interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
       "before" = "${azurerm_cognitive_account.Chatbot-svc.id}"
