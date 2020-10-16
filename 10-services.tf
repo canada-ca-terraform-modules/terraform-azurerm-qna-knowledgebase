@@ -41,7 +41,7 @@ resource "azurerm_search_service" "Chatbot-search" {
 
 //Does not like underscores in the name
 resource "azurerm_app_service" "Chatbot-svc" {
-  name                = "${var.prefix}${each.value}-svc"
+  name                = "${var.prefix}-svc"
   location            = var.location
   resource_group_name = var.resourceGroupName
   app_service_plan_id = var.plan_id == "" ? azurerm_app_service_plan.Chatbot-svcplan[0].id : var.plan_id
@@ -60,8 +60,8 @@ resource "azurerm_app_service" "Chatbot-svc" {
      "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai.instrumentation_key
      "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai.name
      "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai.app_id
-     "PrimaryEndpointKey": "${var.prefix}${each.value}-svc-PrimaryEndpointKey"
-     "SecondaryEndpointKey": "${var.prefix}${each.value}-svc-SecondaryEndpointKey"
+     "PrimaryEndpointKey": "${var.prefix}-svc-PrimaryEndpointKey"
+     "SecondaryEndpointKey": "${var.prefix}-svc-SecondaryEndpointKey"
      "DefaultAnswer": "No good match found in KB.",
      "QNAMAKER_EXTENSION_VERSION": "latest"
   }
@@ -77,7 +77,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
-  name                = "${var.prefix}${each.value}-svc"
+  name                = "${var.prefix}-svc"
   location            = var.cognitiveServicesLocation 
   resource_group_name = var.resourceGroupName
   kind                = "QnAMaker"
