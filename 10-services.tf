@@ -16,7 +16,8 @@ resource "azurerm_app_service_plan" "Chatbot-svcplan" {
 }
 
 resource "azurerm_application_insights" "Chatbot-svc-ai" {
-  name                = "${var.prefix}${var.KBLanguageCode}-svc-appi"
+  for_each = var.knowledgebaseList
+  name                = "${var.prefix}${each.value.languageCode}-svc-appi"
   location            = var.location
   resource_group_name = var.resourceGroupName
   application_type    = "web"
@@ -31,7 +32,8 @@ resource "random_string" "random" {
 }
 
 resource "azurerm_search_service" "Chatbot-search" {
-  name                = "${lower(replace(var.prefix,"/-*_*/",""))}${lower(var.KBLanguageCode)}svc${random_string.random.result}-ss"
+  for_each = var.knowledgebaseList
+  name                = "${lower(replace(var.prefix,"/-*_*/",""))}${lower(each.value.languageCode)}svc${random_string.random.result}-ss"
   location            = var.location
   resource_group_name = var.resourceGroupName
   sku                 = var.search_sku
@@ -40,7 +42,8 @@ resource "azurerm_search_service" "Chatbot-search" {
 
 //Does not like underscores in the name
 resource "azurerm_app_service" "Chatbot-svc" {
-  name                = "${var.prefix}${var.KBLanguageCode}-svc"
+  for_each = var.knowledgebaseList
+  name                = "${var.prefix}${each.value.languageCode}-svc"
   location            = var.location
   resource_group_name = var.resourceGroupName
   app_service_plan_id = var.plan_id == "" ? azurerm_app_service_plan.Chatbot-svcplan[0].id : var.plan_id
@@ -59,8 +62,8 @@ resource "azurerm_app_service" "Chatbot-svc" {
      "UserAppInsightsKey": azurerm_application_insights.Chatbot-svc-ai.instrumentation_key
      "UserAppInsightsName": azurerm_application_insights.Chatbot-svc-ai.name
      "UserAppInsightsAppId": azurerm_application_insights.Chatbot-svc-ai.app_id
-     "PrimaryEndpointKey": "${var.prefix}${var.KBLanguageCode}-svc-PrimaryEndpointKey"
-     "SecondaryEndpointKey": "${var.prefix}${var.KBLanguageCode}-svc-SecondaryEndpointKey"
+     "PrimaryEndpointKey": "${var.prefix}${each.value.languageCode}-svc-PrimaryEndpointKey"
+     "SecondaryEndpointKey": "${var.prefix}${each.value.languageCode}-svc-SecondaryEndpointKey"
      "DefaultAnswer": "No good match found in KB.",
      "QNAMAKER_EXTENSION_VERSION": "latest"
   }
@@ -76,7 +79,8 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
-  name                = "${var.prefix}${var.KBLanguageCode}-svc"
+  for_each = var.knowledgebaseList
+  name                = "${var.prefix}${each.value.languageCode}-svc"
   location            = var.cognitiveServicesLocation 
   resource_group_name = var.resourceGroupName
   kind                = "QnAMaker"
