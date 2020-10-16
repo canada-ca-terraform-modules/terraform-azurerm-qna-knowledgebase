@@ -14,18 +14,18 @@ resource "null_resource" "Chatbot-kb" {
                Write-Host "Trying to create the knowledgebase"
                $data = '${file(each.value)}'
                $data = [System.Text.Encoding]::UTF8.GetBytes($data)
-               $createResultJson = Invoke-WebRequest -Uri '${azurerm_cognitive_account.Chatbot-svc[each.key].endpoint}qnamaker/v4.0/knowledgebases/create'  -Body $data -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc[each.key].primary_access_key}'} -Method Post
+               $createResultJson = Invoke-WebRequest -Uri '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/knowledgebases/create'  -Body $data -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
                
                $createResult = $createResultJson | ConvertFrom-Json
                $oppid = $createResult.operationId 
                Write-Host $createResult
                Write-Host "OperationID: $oppid"
                
-            $endpoint = '${azurerm_cognitive_account.Chatbot-svc[each.key].endpoint}qnamaker/v4.0/operations/'
+            $endpoint = '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/operations/'
             $endpoint = $endpoint + $oppid
             Do{
                Write-Host "Trying to get the kb id"
-               $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc[each.key].primary_access_key}'} -Method Get
+               $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Get
                Write-Host $resultJson
                $oppResult = $resultJson | ConvertFrom-Json
                
@@ -76,7 +76,7 @@ resource "null_resource" "Chatbot-kb" {
       interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
-      "before" = "${azurerm_cognitive_account.Chatbot-svc[each.key].id}"
+      "befo}"
  }
 }
 
@@ -112,7 +112,7 @@ resource "null_resource" "Chatbot-kb-result" {
             Write-Host "Publishing knowledgebase"
             If("${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -ne "")
             {
-               $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc[each.key].endpoint}qnamaker/v4.0/${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc[each.key].primary_access_key}'} -Method Post
+               $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
             }
             
         EOT
@@ -126,8 +126,8 @@ resource "null_resource" "Chatbot-kb-result" {
     for_each = toset(var.knowledgebaseList)
     provisioner "local-exec" {
         command = <<EOT
-              $endpoint = '${azurerm_cognitive_account.Chatbot-svc[each.key].endpoint}qnamaker/v4.0/endpointkeys/'
-               $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc[each.key].primary_access_key}'} -Method Get
+              $endpoint = '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/endpointkeys/'
+               $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Get
                Write-Host $resultJson
                $result = $resultJson | ConvertFrom-Json
                
@@ -146,7 +146,7 @@ resource "null_resource" "Chatbot-kb-result" {
       interpreter = ["PowerShell", "-Command"] 
     }
     triggers = {
-      "before" = "${azurerm_cognitive_account.Chatbot-svc[each.key].id}"
+      "before" = "${azurerm_cognitive_account.Chatbot-svc.id}"
  }
   }
 
