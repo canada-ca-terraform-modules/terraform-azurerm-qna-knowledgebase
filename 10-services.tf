@@ -1,3 +1,10 @@
+locals {
+    deployList = {
+        for x in var.knowledgebaseList : 
+          "${x.languageCode}" => x if lookup(x, "deploy", true) != false
+    }
+}
+
 //Removed plan per langauge
 resource "azurerm_app_service_plan" "Chatbot-svcplan" {
   count = var.plan_id == "" ? 1 : 0
@@ -16,7 +23,7 @@ resource "azurerm_app_service_plan" "Chatbot-svcplan" {
 }
 
 resource "azurerm_application_insights" "Chatbot-svc-ai" {
-  for_each = var.knowledgebaseList
+  for_each = local.deployList
   name                = "${var.prefix}${each.value.languageCode}-svc-appi"
   location            = var.location
   resource_group_name = var.resourceGroupName
@@ -32,7 +39,7 @@ resource "random_string" "random" {
 }
 
 resource "azurerm_search_service" "Chatbot-search" {
-  for_each = var.knowledgebaseList
+  for_each = local.deployList
   name                = "${lower(replace(var.prefix,"/-*_*/",""))}${lower(each.value.languageCode)}svc${random_string.random.result}-ss"
   location            = var.location
   resource_group_name = var.resourceGroupName
@@ -42,7 +49,7 @@ resource "azurerm_search_service" "Chatbot-search" {
 
 //Does not like underscores in the name
 resource "azurerm_app_service" "Chatbot-svc" {
-  for_each = var.knowledgebaseList
+  for_each = local.deployList
   name                = "${var.prefix}${each.value.languageCode}-svc"
   location            = var.location
   resource_group_name = var.resourceGroupName
@@ -79,7 +86,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
-  for_each = var.knowledgebaseList
+  for_each = local.deployList
   name                = "${var.prefix}${each.value.languageCode}-svc"
   location            = var.cognitiveServicesLocation 
   resource_group_name = var.resourceGroupName
