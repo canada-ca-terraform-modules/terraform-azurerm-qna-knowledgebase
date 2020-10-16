@@ -85,15 +85,15 @@ resource "azurerm_cognitive_account" "Chatbot-svc" {
   resource_group_name = var.resourceGroupName
   kind                = "QnAMaker"
   sku_name = var.account_sku
-  qna_runtime_endpoint = "https://${azurerm_app_service.Chatbot-svc.default_site_hostname}"
+  qna_runtime_endpoint = "https://${azurerm_app_service.Chatbot-svc[each.key].default_site_hostname}"
   depends_on = [
       azurerm_app_service.Chatbot-svc
   ]
   tags = var.tags
 }
 
-output "endpoint" {
-  value = azurerm_app_service.Chatbot-svc.default_site_hostname
+output "app_srv" {
+  value = azurerm_app_service.Chatbot-svc
 }
 
 output "plan_id" {
