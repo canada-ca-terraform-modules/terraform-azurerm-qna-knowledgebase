@@ -3,13 +3,15 @@
 variable "tags" {}
 variable "prefix" {}
 
-variable "KBFileName" {
-  description = "The file name of the knowledgebase template to use."
-}
+# variable "KBFileName" {
+#   description = "The file name of the knowledgebase template to use."
+# }
 
-variable "KBLanguageCode" {
-  description = "The language code to use when naming the KB (EN, FR)."
-}
+# variable "KBLanguageCode" {
+#   description = "The language code to use when naming the KB (EN, FR)."
+# }
+
+variable "knowledgebaseList"{}
 
 variable "resourceGroupName" {}
 
