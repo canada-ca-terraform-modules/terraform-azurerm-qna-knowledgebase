@@ -170,7 +170,7 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
   depends_on = [null_resource.Chatbot-kb-GetSubKey-result-if-missing]
   triggers = {
     id = null_resource.Chatbot-kb[each.key].id
-    result     = fileexists("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}")),"\ufeff","") :  lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing.triggers, "result", "")
+    result     = fileexists("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}")),"\ufeff","") :  lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing[each.key].triggers, "result", "")
     
   } 
 }
