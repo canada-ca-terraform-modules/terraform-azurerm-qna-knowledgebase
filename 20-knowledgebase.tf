@@ -72,7 +72,7 @@ resource "null_resource" "Chatbot-kb" {
     }
     provisioner "local-exec" {
       when    = destroy
-      command = "Remove-Item ./${path.module}/tmp/*.* -Force"
+      command = "Remove-Item ./tmp/*.* -Force"
       interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
@@ -142,7 +142,7 @@ resource "null_resource" "Chatbot-kb-result" {
     depends_on = [null_resource.Chatbot-kb-publish]
     provisioner "local-exec" {
       when    = destroy
-      command = "Remove-Item ./${path.module}/tmp/*-key.* -Force"
+      command = "Remove-Item ./tmp/*-key.* -Force"
       interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
