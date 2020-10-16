@@ -3,7 +3,7 @@ resource "random_uuid" "uuid" {
 }
 
 resource "null_resource" "Chatbot-kb" {
-  for_each = var.knowledgebaseList
+  for_each = toset(var.knowledgebaseList)
     provisioner "local-exec" {
         command = <<EOT
           $tryCount = 10
@@ -81,7 +81,7 @@ resource "null_resource" "Chatbot-kb" {
 }
 
 resource "null_resource" "Chatbot-kb-result-if-missing" {
-  for_each = var.knowledgebaseList
+  for_each = toset(var.knowledgebaseList)
   depends_on = [null_resource.Chatbot-kb]
   triggers = {
     result     = fileexists("./tmp/${var.prefix}.${each.value}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}.${random_uuid.uuid.result}")),"\ufeff","") : ""
@@ -96,7 +96,7 @@ resource "null_resource" "Chatbot-kb-result-if-missing" {
 }
 
 resource "null_resource" "Chatbot-kb-result" {
-  for_each = var.knowledgebaseList
+  for_each = toset(var.knowledgebaseList)
   depends_on = [null_resource.Chatbot-kb-result-if-missing]
   triggers = {
     id = null_resource.Chatbot-kb[each.key].id
@@ -106,7 +106,7 @@ resource "null_resource" "Chatbot-kb-result" {
 }
 
  resource "null_resource" "Chatbot-kb-publish" {
-    for_each = var.knowledgebaseList
+    for_each = toset(var.knowledgebaseList)
     provisioner "local-exec" {
         command = <<EOT
             Write-Host "Publishing knowledgebase"
@@ -123,7 +123,7 @@ resource "null_resource" "Chatbot-kb-result" {
   }
 
   resource "null_resource" "Chatbot-kb-GetSubKey" {
-    for_each = var.knowledgebaseList
+    for_each = toset(var.knowledgebaseList)
     provisioner "local-exec" {
         command = <<EOT
               $endpoint = '${azurerm_cognitive_account.Chatbot-svc[each.key].endpoint}qnamaker/v4.0/endpointkeys/'
@@ -151,7 +151,7 @@ resource "null_resource" "Chatbot-kb-result" {
   }
 
   resource "null_resource" "Chatbot-kb-GetSubKey-result-if-missing" {
-    for_each = var.knowledgebaseList
+    for_each = toset(var.knowledgebaseList)
   depends_on = [null_resource.Chatbot-kb-GetSubKey]
   triggers = {
     result     = fileexists("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}")),"\ufeff","") : ""
@@ -166,7 +166,7 @@ resource "null_resource" "Chatbot-kb-result" {
 }
 
 resource "null_resource" "Chatbot-kb-GetSubKey-result" {
-  for_each = var.knowledgebaseList
+  for_each = toset(var.knowledgebaseList)
   depends_on = [null_resource.Chatbot-kb-GetSubKey-result-if-missing]
   triggers = {
     id = null_resource.Chatbot-kb[each.key].id
