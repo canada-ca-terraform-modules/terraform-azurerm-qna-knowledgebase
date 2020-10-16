@@ -1,7 +1,7 @@
 
 locals {
   deployList = {
-    for x in local.deployList :
+    for x in var.knowledgebaseList:
     "${x.languageCode}" => x if lookup(x, "deploy", true) != false
   }
 }
