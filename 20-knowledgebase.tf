@@ -76,7 +76,7 @@ resource "null_resource" "Chatbot-kb" {
       interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
-      "befo}"
+      "before" = "${azurerm_cognitive_account.Chatbot-svc.id}"
  }
 }
 
