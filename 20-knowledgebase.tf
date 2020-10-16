@@ -175,14 +175,12 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
   } 
 }
 
-
+//List of KBIDs
 output "KBID" {
-  for_each = var.knowledgebaseList.knowledgebase
-  value = "${null_resource.Chatbot-kb-result[each.key].triggers["result"]}"
+    value = "${null_resource.Chatbot-kb-result.triggers["result"]}"
 }
 
 output "key" {
-  for_each = var.knowledgebaseList.knowledgebase
-  value = "${null_resource.Chatbot-kb-GetSubKey-result[each.key].triggers["result"]}"
+    value = "${null_resource.Chatbot-kb-GetSubKey-result.triggers["result"]}"
 }
 
