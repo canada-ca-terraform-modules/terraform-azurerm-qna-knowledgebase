@@ -99,7 +99,7 @@ resource "null_resource" "Chatbot-kb-result" {
   for_each = var.knowledgebaseList.knowledgebase
   depends_on = [null_resource.Chatbot-kb-result-if-missing]
   triggers = {
-    id = null_resource.Chatbot-kb.id
+    id = null_resource.Chatbot-kb[each.key].id
     result     = fileexists("./tmp/${var.prefix}.${each.value}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}.${random_uuid.uuid.result}")),"\ufeff","") :  lookup(null_resource.Chatbot-kb-result-if-missing[each.value].triggers, "result", "")
     
   } 
@@ -169,7 +169,7 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
   for_each = var.knowledgebaseList.knowledgebase
   depends_on = [null_resource.Chatbot-kb-GetSubKey-result-if-missing]
   triggers = {
-    id = null_resource.Chatbot-kb.id
+    id = null_resource.Chatbot-kb[each.key].id
     result     = fileexists("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.value}-key.${random_uuid.uuid.result}")),"\ufeff","") :  lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing.triggers, "result", "")
     
   } 
