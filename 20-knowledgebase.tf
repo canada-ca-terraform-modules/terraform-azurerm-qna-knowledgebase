@@ -76,7 +76,7 @@ resource "null_resource" "Chatbot-kb" {
       interpreter = ["pwsh", "-Command"] 
     }
     triggers = {
-      "before" = "${azurerm_cognitive_account.Chatbot-svc.id}"
+      "before" = "${azurerm_cognitive_account.Chatbot-svc[each.key].id}"
  }
 }
 
@@ -146,7 +146,7 @@ resource "null_resource" "Chatbot-kb-result" {
       interpreter = ["PowerShell", "-Command"] 
     }
     triggers = {
-      "before" = "${azurerm_cognitive_account.Chatbot-svc.id}"
+      "before" = "${azurerm_cognitive_account.Chatbot-svc[each.key].id}"
  }
   }
 
@@ -177,10 +177,10 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
 
 //List of KBIDs
 output "KBID" {
-    value = "${null_resource.Chatbot-kb-result.triggers["result"]}"
+    value = "${null_resource.Chatbot-kb-result}"
 }
 
 output "key" {
-    value = "${null_resource.Chatbot-kb-GetSubKey-result.triggers["result"]}"
+    value = "${null_resource.Chatbot-kb-GetSubKey-result}"
 }
 
