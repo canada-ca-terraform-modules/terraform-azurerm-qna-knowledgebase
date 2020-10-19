@@ -183,4 +183,3 @@ output "KBList" {
 output "keyList" {
     value = "${null_resource.Chatbot-kb-GetSubKey-result}"
 }
-

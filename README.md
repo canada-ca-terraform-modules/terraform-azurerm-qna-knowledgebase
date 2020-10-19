@@ -41,11 +41,11 @@ module "ScSc-CIO-Chatbot-KB" {
 }
 
 output "English_Knowledgebase_ID" {
-  value = "${module.ScSc-CIO-Chatbot-KB[0].KB.triggers["result"]}"
+  value = "${module.ScSc-CIO-Chatbot-KB[0].KBList.triggers["result"]}"
 }
 
 output "French_Knowledgebase_ID" {
-  value = "${module.ScSc-CIO-Chatbot-KB[1].KB.triggers["result"]}"
+  value = "${module.ScSc-CIO-Chatbot-KB[1].KBList.triggers["result"]}"
 }
 
 ```
@@ -57,8 +57,7 @@ output "French_Knowledgebase_ID" {
 | prefix                                  | string | yes      | The prefix to add to the name for the knowledgebase |
 | tags                                    | object | no       | Object containing a tag values - [tags pairs](#tag-object) |
 | location                                | string | yes      | The location to deploy to.  canadacentral, canadaeast |
-| KBFileName                              | string | yes      | The file name of the knowledgebase template to use. |
-| KBLanguageCode                          | string | yes      | The language code to use when naming the KB (EN, FR). |
+| knowledgebaseList                              | object | yes      | A List of knowledgebase locations to add.  Knowledge base files must exist in the project - [knowledgebase List](#knowledgebase-list) |
 | resourceGroupName                      | string | yes       | The name of the resource group to put the knowledgebase components into. |
 | qna_tier                               | string | no       | The tier for the chatbot application service plan.  Free, Shared, Standard.  Note only one free one is allowed. Defaults to Free |
 | qna_size                                | string | no       | The size for the chatbot qna service.  F1, D1, S1.  Note only one free one is allowed.  Defaults to F1. |
@@ -67,6 +66,34 @@ output "French_Knowledgebase_ID" {
 | plan_id                             | string | no        | The service plan to use.  If left out it will create one |
 | plan_reserved                             | string | no        | If the service plan is reserved.  Defaults to false.  Must be true for Linux plans. |
 | plan_kind                             | string | no        | The kind of the App Service Plan to create. Possible values are Windows (also available as App), Linux, elastic (for Premium Consumption) and FunctionApp (for a Consumption Plan). Defaults to Windows. Changing this forces a new resource to be created. |
+
+### knowledgebase-list
+Example of knowledgebases in each language:
+
+```hcl
+knowledgebaseList = [
+   {
+     languageCode = "EN",
+     deploy = true
+     knowledgebaseLocations = {
+       ScSc-CIO-Chatbot-Chit-Chaty-EN-KB = "knowledgebases/ScSc-CIO-Chatbot-Chit-Chaty-EN-KB.json",
+       ScSc-CIO-Chatbot-Digital-Lounge-EN-KB = "knowledgebases/ScSc-CIO-Chatbot-Digital-Lounge-EN-KB.json",
+       ScSc-CIO-Chatbot-Sample-EN-KB = "knowledgebases/ScSc-CIO-Chatbot-Sample-EN-KB.json",
+       ScSc-CIO-Chatbot-Student-EN-KB= "knowledgebases/ScSc-CIO-Chatbot-Student-EN-KB.json"
+     },
+   },
+   {
+      languageCode = "FR"
+      deploy = true
+      knowledgebaseLocations = {
+        ScSc-CIO-Chatbot-Chit-Chaty-FR-KB = "knowledgebases/ScSc-CIO-Chatbot-Chit-Chaty-FR-KB.json",
+        ScSc-CIO-Chatbot-Digital-Lounge-FR-KB = "knowledgebases/ScSc-CIO-Chatbot-Digital-Lounge-FR-KB.json",
+        ScSc-CIO-Chatbot-Sample-FR-KB = "knowledgebases/ScSc-CIO-Chatbot-Sample-FR-KB.json",
+        ScSc-CIO-Chatbot-Student-FR-KB = "knowledgebases/ScSc-CIO-Chatbot-Student-FR-KB.json"
+      }
+   }
+]
+```
 
 ### tag object
 
