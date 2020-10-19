@@ -5,7 +5,14 @@
 This module deploys a qna maker knowledgebase, azure service congnative account, service to host it, azure search service, app service plan, and application insights for monitoring.
 Note you must call this module for each language you wish to deploy and only one language is allowed per service.
 
-This module is compatible with azurerm v2.x
+This module is compatible with azurerm v2.x and assumes deploying from a Linux VM.
+
+## Docker Setup
+If you are using the Microsoft CAF framework with rover you can add the following to your Dockerfile:
+```
+FROM sscspccloudnuage/rover:2009.0812
+RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo && sudo yum install -y powershell
+```
 
 ## Security Controls
 * TBD
@@ -109,7 +116,6 @@ tags = {
   "tagXname" = "some other value"
 }
 ```
-
 
 ## History
 
