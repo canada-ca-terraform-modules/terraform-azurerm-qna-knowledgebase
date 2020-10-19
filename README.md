@@ -18,43 +18,36 @@ This module is compatible with azurerm v2.x
 ## Usage
 
 ```terraform
-module "ChatbotKBService-EN" {
-  source               = "./modules/qnaKBService"
-  name                 = var.chatbotName
-  location             = azurerm_resource_group.ChatbotSVC-rg.location
-  resourceGroupName    = azurerm_resource_group.ChatbotSVC-rg.name
-  prefix               = local.prefix
-  KBFileName           = var.englishKBFileName
-  KBLanguageCode       = var.englishKBLanguageCode
-  qna_tier             = var.qna_tier
-  qna_size             = var.qna_size
-  search_sku           = var.search_sku
-  account_sku          = var.account_sku
-  tags                 = var.tags
+locals {
+  deployList = {
+    for x in var.knowledgebaseList :
+    "${x.languageCode}" => x if lookup(x, "deploy", true) != false
+  }
 }
 
-module "ChatbotKBService-FR" {
-  source               = "./modules/qnaKBService"
-  name                 = var.chatbotName
-  location             = azurerm_resource_group.ChatbotSVC-rg.location
-  resourceGroupName    = azurerm_resource_group.ChatbotSVC-rg.name
-  prefix               = local.prefix
-  KBFileName           = var.frenchKBFileName
-  KBLanguageCode       = var.frenchKBLanguageCode
-  qna_tier             = var.qna_tier
-  qna_size             = var.qna_size
-  search_sku           = var.search_sku
-  account_sku          = var.account_sku
-  tags                 = var.tags
+module "ScSc-CIO-Chatbot-KB" {
+  for_each                  = local.deployList
+  source                    = "github.com/canada-ca-terraform-modules/terraform-azurerm-qna-knowledgebase?ref=202010116.dev"
+  location                  = local.resource_groups_L2.Project.location
+  cognitiveServicesLocation = var.cognitiveServicesLocation
+  resourceGroupName         = local.resource_groups_L2.Project.name
+  prefix                    = "${local.prefix}-${each.key}"
+  knowledgebaseList         = each.value.knowledgebaseLocations
+  qna_tier                  = var.qna_tier
+  qna_size                  = var.qna_size
+  search_sku                = var.search_sku
+  account_sku               = var.account_sku
+  tags                      = var.tags
 }
 
 output "English_Knowledgebase_ID" {
-  value = "${module.ChatbotKBService-EN.KBID}"
+  value = "${module.ScSc-CIO-Chatbot-KB[0].KB.triggers["result"]}"
 }
 
 output "French_Knowledgebase_ID" {
-  value = "${module.ChatbotKBService-FR.KBID}"
+  value = "${module.ScSc-CIO-Chatbot-KB[1].KB.triggers["result"]}"
 }
+
 ```
 
 ## Variables Values

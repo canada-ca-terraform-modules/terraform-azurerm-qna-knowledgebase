@@ -176,11 +176,11 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
 }
 
 //List of KBIDs
-output "KBID" {
+output "KBList" {
     value = "${null_resource.Chatbot-kb-result}"
 }
 
-output "key" {
+output "keyList" {
     value = "${null_resource.Chatbot-kb-GetSubKey-result}"
 }
 
