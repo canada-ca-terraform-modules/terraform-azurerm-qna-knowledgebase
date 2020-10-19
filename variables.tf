@@ -3,13 +3,15 @@
 variable "tags" {}
 variable "prefix" {}
 
-variable "KBFileName" {
-  description = "The file name of the knowledgebase template to use."
-}
+# variable "KBFileName" {
+#   description = "The file name of the knowledgebase template to use."
+# }
 
-variable "KBLanguageCode" {
-  description = "The language code to use when naming the KB (EN, FR)."
-}
+# variable "KBLanguageCode" {
+#   description = "The language code to use when naming the KB (EN, FR)."
+# }
+
+variable "knowledgebaseList"{}
 
 variable "resourceGroupName" {}
 
@@ -35,4 +37,18 @@ variable "search_sku" {
 variable "account_sku" {
   default = "S0"
   description = "The sku to use for the azure congative account"
+}
+
+variable "plan_id" {
+  default = ""
+  description = "The app service plan to use.  If none is passed it will create one"
+}
+
+variable "plan_reserved" {
+  default =false
+}
+
+variable "plan_kind" {
+  default = "Windows"
+  description = "The kind of the App Service Plan to create. Possible values are Windows (also available as App), Linux, elastic (for Premium Consumption) and FunctionApp (for a Consumption Plan). Defaults to Windows. Changing this forces a new resource to be created."
 }
