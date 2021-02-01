@@ -56,8 +56,8 @@ resource "azurerm_app_service" "Chatbot-svc" {
   }
 
   app_settings = {
-    "AzureSearchName" = var.search_service == "" ? azurerm_search_service.Chatbot-search.name : var.search_service
-    "AzureSearchAdminKey" : var.search_service_key == "" ? azurerm_search_service.Chatbot-search.primary_key : var.search_service_key
+    "AzureSearchName" = var.search_service == "" ? azurerm_search_service.Chatbot-search[0].name : var.search_service
+    "AzureSearchAdminKey" : var.search_service_key == "" ? azurerm_search_service.Chatbot-search[0].primary_key : var.search_service_key
     "UserAppInsightsKey" : azurerm_application_insights.Chatbot-svc-ai.instrumentation_key
     "UserAppInsightsName" : azurerm_application_insights.Chatbot-svc-ai.name
     "UserAppInsightsAppId" : azurerm_application_insights.Chatbot-svc-ai.app_id
