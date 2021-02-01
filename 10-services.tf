@@ -11,7 +11,6 @@ resource "azurerm_app_service_plan" "Chatbot-svcplan" {
     //Only get one Free/F1.  Shared/Free need use_32_bit_worker_process = true in the application service 
     tier = var.qna_tier
     size = var.qna_size
-
   }
   tags = var.tags
 }
@@ -38,6 +37,10 @@ resource "azurerm_search_service" "Chatbot-search" {
   resource_group_name = var.resourceGroupName
   sku                 = var.search_sku
   tags                = var.tags
+
+  tags = var.tags
+}
+
 }
 
 //Does not like underscores in the name
@@ -71,6 +74,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
     azurerm_application_insights.Chatbot-svc-ai,
     azurerm_app_service_plan.Chatbot-svcplan,
     azurerm_search_service.Chatbot-search
+
   ]
   tags = var.tags
 }
@@ -78,6 +82,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
 //Taint does not tear this down but destroying the services will
 resource "azurerm_cognitive_account" "Chatbot-svc" {
+
   name                 = "${var.prefix}-svc"
   location             = var.cognitiveServicesLocation
   resource_group_name  = var.resourceGroupName
@@ -86,6 +91,7 @@ resource "azurerm_cognitive_account" "Chatbot-svc" {
   qna_runtime_endpoint = "https://${azurerm_app_service.Chatbot-svc.default_site_hostname}"
   depends_on = [
     azurerm_app_service.Chatbot-svc
+
   ]
   tags = var.tags
 }
@@ -96,4 +102,6 @@ output "app_srv" {
 
 output "plan_id" {
   value = var.plan_id == "" ? azurerm_app_service_plan.Chatbot-svcplan[0].id : var.plan_id
+
 }
+
