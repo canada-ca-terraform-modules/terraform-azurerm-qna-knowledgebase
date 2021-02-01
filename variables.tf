@@ -11,7 +11,8 @@ variable "prefix" {}
 #   description = "The language code to use when naming the KB (EN, FR)."
 # }
 
-variable "knowledgebaseList"{}
+
+variable "knowledgebaseList" {}
 
 variable "resourceGroupName" {}
 
@@ -20,35 +21,47 @@ variable "location" {}
 variable "cognitiveServicesLocation" {}
 
 variable "qna_tier" {
-  default = "Free"
+  default     = "Free"
   description = "The tier for the chatbot application service plan.  Free, Shared, Standard"
 }
 
 variable "qna_size" {
-  default = "F1"
+  default     = "F1"
   description = "The size for the chatbot qna service.  F1, D1, S1.  Only get one free one"
 }
 
 variable "search_sku" {
-  default = "standard"
+  default     = "standard"
   description = "The sku to use for the azure search service"
 }
 
 variable "account_sku" {
-  default = "S0"
+  default     = "S0"
   description = "The sku to use for the azure congative account"
 }
 
 variable "plan_id" {
-  default = ""
+
+  default     = ""
   description = "The app service plan to use.  If none is passed it will create one"
 }
 
+variable "search_service" {
+  default     = ""
+  description = "The search service plan to use.  If none is passed it will create one"
+}
+
+variable "search_service_key" {
+  default     = ""
+  description = "The search service key to use.  If none is passed it will create one"
+}
+
 variable "plan_reserved" {
-  default =false
+  default = false
 }
 
 variable "plan_kind" {
-  default = "Windows"
+  default     = "Windows"
   description = "The kind of the App Service Plan to create. Possible values are Windows (also available as App), Linux, elastic (for Premium Consumption) and FunctionApp (for a Consumption Plan). Defaults to Windows. Changing this forces a new resource to be created."
 }
+
