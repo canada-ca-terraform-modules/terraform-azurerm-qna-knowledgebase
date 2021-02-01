@@ -37,10 +37,6 @@ resource "azurerm_search_service" "Chatbot-search" {
   resource_group_name = var.resourceGroupName
   sku                 = var.search_sku
   tags                = var.tags
-
-  tags = var.tags
-}
-
 }
 
 //Does not like underscores in the name
