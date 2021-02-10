@@ -101,3 +101,7 @@ output "plan_id" {
 
 }
 
+output "cognitive_account" {
+  value = azurerm_cognitive_account.Chatbot-svc
+}
+
