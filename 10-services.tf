@@ -45,7 +45,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
   location            = var.location
   resource_group_name = var.resourceGroupName
   app_service_plan_id = var.plan_id == "" ? azurerm_app_service_plan.Chatbot-svcplan[0].id : var.plan_id
-
+  https_only          = true
   site_config {
     dotnet_framework_version = "v4.0"
     cors {
