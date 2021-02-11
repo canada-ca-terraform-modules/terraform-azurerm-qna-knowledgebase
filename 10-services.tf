@@ -105,3 +105,6 @@ output "cognitive_account" {
   value = azurerm_cognitive_account.Chatbot-svc
 }
 
+output "search_service" {
+  value = azurerm_search_service.Chatbot-search
+}
