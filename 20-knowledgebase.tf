@@ -90,7 +90,7 @@ resource "null_resource" "Chatbot-kb-result-if-missing" {
 
   lifecycle {
     ignore_changes = [
-      triggers
+      triggers["result"]
     ]
   }
 }
@@ -160,7 +160,7 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result-if-missing" {
 
   lifecycle {
     ignore_changes = [
-      triggers
+      triggers["result"]
     ]
   }
 }
