@@ -51,7 +51,7 @@ resource "azurerm_app_service" "Chatbot-svc" {
     cors {
       allowed_origins = ["https://qnamaker-service.trafficmanager.net", "https://qnamaker.ai", "https://www.qnamaker-service.trafficmanager.net", "https://www.qnamaker.ai"]
     }
-    use_32_bit_worker_process = var.qna_tier == "PremiumV2" ? false : true //True for free and shared tiers.  False for Standard
+    use_32_bit_worker_process = var.qna_tier == "PremiumV2" || var.qna_tier == "PremiumV2" ? false : true //True for free and shared tiers.  False for Standard
   }
 
   app_settings = {
