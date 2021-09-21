@@ -37,28 +37,28 @@ resource "null_resource" "Chatbot-kb" {
             } While ($oppResult.resourceLocation -eq $null -And $oppResult.operationState -ne "Failed" )
             $resourceLocation =  $oppResult.resourceLocation
             Write-Host "Knowledgebase created: $resourceLocation"
-            try
-            {
-              $oppResult.resourceLocation | Out-File -Encoding "UTF8" -FilePath "./${"./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}"}" 
-            }
-            catch
-            {
-               $failed = $true 
-               Write-Host $_
-               $trycount=0
-            }
+            # try
+            # {
+            #   $oppResult.resourceLocation | Out-File -Encoding "UTF8" -FilePath "./${"./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}"}" 
+            # }
+            # catch
+            # {
+            #    $failed = $true 
+            #    Write-Host $_
+            #    $trycount=0
+            # }
                    
 
-            } 
-            catch { 
-              $failed = $true 
+            # } 
+            # catch { 
+            #   $failed = $true 
               
-              Write-Host $_
-              Write-Host "Service endpoint may not be ready trying again in 5 minutes.  Try $tryCount of 10"
+            #   Write-Host $_
+            #   Write-Host "Service endpoint may not be ready trying again in 5 minutes.  Try $tryCount of 10"
               
-              $trycount--
-              Start-Sleep -s 300
-            }                       
+            #   $trycount--
+            #   Start-Sleep -s 300
+            # }                       
           } While ($failed -eq $true -And $tryCount -gt 0)
           
           If($trycount -eq 0)
@@ -80,106 +80,105 @@ resource "null_resource" "Chatbot-kb" {
   }
 }
 
-resource "null_resource" "Chatbot-kb-result-if-missing" {
-  for_each   = var.knowledgebaseList
-  depends_on = [null_resource.Chatbot-kb]
-  triggers = {
-    result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : ""
+# resource "null_resource" "Chatbot-kb-result-if-missing" {
+#   for_each   = var.knowledgebaseList
+#   depends_on = [null_resource.Chatbot-kb]
+#   triggers = {
+#     result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : ""
 
-  }
+#   }
+#   lifecycle {
+#     ignore_changes = [
+#       triggers["result"]
+#     ]
+#   }
+# }
 
-  lifecycle {
-    ignore_changes = [
-      triggers["result"]
-    ]
-  }
-}
+# resource "null_resource" "Chatbot-kb-result" {
+#   for_each   = var.knowledgebaseList
+#   depends_on = [null_resource.Chatbot-kb-result-if-missing]
+#   triggers = {
+#     id     = null_resource.Chatbot-kb[each.key].id
+#     result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-result-if-missing[each.key].triggers, "result", "")
 
-resource "null_resource" "Chatbot-kb-result" {
-  for_each   = var.knowledgebaseList
-  depends_on = [null_resource.Chatbot-kb-result-if-missing]
-  triggers = {
-    id     = null_resource.Chatbot-kb[each.key].id
-    result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-result-if-missing[each.key].triggers, "result", "")
+#   }
+# }
 
-  }
-}
+# resource "null_resource" "Chatbot-kb-publish" {
+#   for_each = var.knowledgebaseList
+#   provisioner "local-exec" {
+#     command     = <<EOT
+#             Write-Host "Publishing knowledgebase"
+#             If("${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -ne "")
+#             {
+#                $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
+#             }
 
-resource "null_resource" "Chatbot-kb-publish" {
-  for_each = var.knowledgebaseList
-  provisioner "local-exec" {
-    command     = <<EOT
-            Write-Host "Publishing knowledgebase"
-            If("${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -ne "")
-            {
-               $publishResult = Invoke-WebRequest -Uri "${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/${null_resource.Chatbot-kb-result[each.key].triggers["result"]}" -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Post
-            }
-            
-        EOT
-    interpreter = ["pwsh", "-Command"]
+#         EOT
+#     interpreter = ["pwsh", "-Command"]
 
-  }
-  depends_on = [null_resource.Chatbot-kb-result, null_resource.Chatbot-kb]
-}
+#   }
+#   depends_on = [null_resource.Chatbot-kb-result, null_resource.Chatbot-kb]
+# }
 
-resource "null_resource" "Chatbot-kb-GetSubKey" {
-  for_each = var.knowledgebaseList
-  provisioner "local-exec" {
-    command     = <<EOT
-              $endpoint = '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/endpointkeys/'
-               $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Get
-               Write-Host $resultJson
-               $result = $resultJson | ConvertFrom-Json
-               
-            $resourceLocation =  $oppResult.resourceLocation
-            $result.primaryEndpointKey | Out-File -Encoding "UTF8" -FilePath "./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}"
-                   
-          
-        EOT
-    interpreter = ["pwsh", "-Command"]
+# resource "null_resource" "Chatbot-kb-GetSubKey" {
+#   for_each = var.knowledgebaseList
+#   provisioner "local-exec" {
+#     command     = <<EOT
+#               $endpoint = '${azurerm_cognitive_account.Chatbot-svc.endpoint}qnamaker/v4.0/endpointkeys/'
+#                $resultJson = Invoke-WebRequest -Uri $endpoint -Headers @{'Content-Type'='application/json'; 'charset'='utf-8';'Ocp-Apim-Subscription-Key'= '${azurerm_cognitive_account.Chatbot-svc.primary_access_key}'} -Method Get
+#                Write-Host $resultJson
+#                $result = $resultJson | ConvertFrom-Json
 
-  }
-  depends_on = [null_resource.Chatbot-kb-publish]
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "Remove-Item ./tmp/*-key.* -Force"
-    interpreter = ["pwsh", "-Command"]
-  }
-  triggers = {
-    "before" = azurerm_cognitive_account.Chatbot-svc.id
-  }
-}
+#             $resourceLocation =  $oppResult.resourceLocation
+#             $result.primaryEndpointKey | Out-File -Encoding "UTF8" -FilePath "./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}"
 
-resource "null_resource" "Chatbot-kb-GetSubKey-result-if-missing" {
-  for_each   = var.knowledgebaseList
-  depends_on = [null_resource.Chatbot-kb-GetSubKey]
-  triggers = {
-    result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : ""
 
-  }
+#         EOT
+#     interpreter = ["pwsh", "-Command"]
 
-  lifecycle {
-    ignore_changes = [
-      triggers["result"]
-    ]
-  }
-}
+#   }
+#   depends_on = [null_resource.Chatbot-kb-publish]
+#   provisioner "local-exec" {
+#     when        = destroy
+#     command     = "Remove-Item ./tmp/*-key.* -Force"
+#     interpreter = ["pwsh", "-Command"]
+#   }
+#   triggers = {
+#     "before" = azurerm_cognitive_account.Chatbot-svc.id
+#   }
+# }
 
-resource "null_resource" "Chatbot-kb-GetSubKey-result" {
-  for_each   = var.knowledgebaseList
-  depends_on = [null_resource.Chatbot-kb-GetSubKey-result-if-missing]
-  triggers = {
-    id     = null_resource.Chatbot-kb[each.key].id
-    result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing[each.key].triggers, "result", "")
+# resource "null_resource" "Chatbot-kb-GetSubKey-result-if-missing" {
+#   for_each   = var.knowledgebaseList
+#   depends_on = [null_resource.Chatbot-kb-GetSubKey]
+#   triggers = {
+#     result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : ""
 
-  }
-}
+#   }
+
+#   lifecycle {
+#     ignore_changes = [
+#       triggers["result"]
+#     ]
+#   }
+# }
+
+# resource "null_resource" "Chatbot-kb-GetSubKey-result" {
+#   for_each   = var.knowledgebaseList
+#   depends_on = [null_resource.Chatbot-kb-GetSubKey-result-if-missing]
+#   triggers = {
+#     id     = null_resource.Chatbot-kb[each.key].id
+#     result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing[each.key].triggers, "result", "")
+
+#   }
+# }
 
 //List of KBIDs
 output "KBList" {
-  value = "${null_resource.Chatbot-kb-result}"
+  value = null_resource.Chatbot-kb-result
 }
 
 output "keyList" {
-  value = "${null_resource.Chatbot-kb-GetSubKey-result}"
+  value = null_resource.Chatbot-kb-GetSubKey-result
 }
