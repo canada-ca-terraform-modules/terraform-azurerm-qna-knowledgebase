@@ -175,10 +175,10 @@ resource "null_resource" "Chatbot-kb" {
 # }
 
 //List of KBIDs
-output "KBList" {
-  value = null_resource.Chatbot-kb-result
-}
+# output "KBList" {
+#   value = null_resource.Chatbot-kb-result
+# }
 
-output "keyList" {
-  value = null_resource.Chatbot-kb-GetSubKey-result
-}
+# output "keyList" {
+#   value = null_resource.Chatbot-kb-GetSubKey-result
+# }
