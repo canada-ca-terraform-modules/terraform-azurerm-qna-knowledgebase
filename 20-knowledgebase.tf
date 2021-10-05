@@ -102,7 +102,8 @@ resource "null_resource" "Chatbot-kb-result" {
   }
   lifecycle {
     ignore_changes = [
-      triggers
+      triggers["result"],
+      triggers["id"]
     ]
   }
 }
@@ -176,7 +177,8 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
   }
   lifecycle {
     ignore_changes = [
-      triggers
+      triggers["result"],
+      triggers["id"]
     ]
   }
 }
