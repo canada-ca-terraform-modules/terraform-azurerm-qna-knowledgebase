@@ -73,6 +73,11 @@ resource "azurerm_app_service" "Chatbot-svc" {
 
   ]
   tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      app_settings, # prevent TF reporting configuration drift after app code is deployed
+    ]
+  }
 }
 
 //Looks like ARM has the ability to specify a custom domain but not here so it will be https://westus.api.cognitive.microsoft.com/qnamaker/v4.0
