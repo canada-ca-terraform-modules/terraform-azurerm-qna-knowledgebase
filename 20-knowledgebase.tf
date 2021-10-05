@@ -85,9 +85,7 @@ resource "null_resource" "Chatbot-kb-result-if-missing" {
   depends_on = [null_resource.Chatbot-kb]
   triggers = {
     result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : ""
-
   }
-
   lifecycle {
     ignore_changes = [
       triggers["result"]
@@ -101,7 +99,11 @@ resource "null_resource" "Chatbot-kb-result" {
   triggers = {
     id     = null_resource.Chatbot-kb[each.key].id
     result = fileexists("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-result-if-missing[each.key].triggers, "result", "")
-
+  }
+  lifecycle {
+    ignore_changes = [
+      triggers
+    ]
   }
 }
 
@@ -157,7 +159,6 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result-if-missing" {
     result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : ""
 
   }
-
   lifecycle {
     ignore_changes = [
       triggers["result"]
@@ -173,13 +174,18 @@ resource "null_resource" "Chatbot-kb-GetSubKey-result" {
     result = fileexists("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}") ? replace(chomp(file("./tmp/${var.prefix}.${each.key}-key.${random_uuid.uuid.result}")), "\ufeff", "") : lookup(null_resource.Chatbot-kb-GetSubKey-result-if-missing[each.key].triggers, "result", "")
 
   }
+  lifecycle {
+    ignore_changes = [
+      triggers
+    ]
+  }
 }
 
 //List of KBIDs
 output "KBList" {
-  value = "${null_resource.Chatbot-kb-result}"
+  value = null_resource.Chatbot-kb-result
 }
 
 output "keyList" {
-  value = "${null_resource.Chatbot-kb-GetSubKey-result}"
+  value = null_resource.Chatbot-kb-GetSubKey-result
 }
